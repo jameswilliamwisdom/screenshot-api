@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screenshot API</title>
+    <style>
+        :root {
+            --background-color: #1a1a1a;
+            --text-color: #f0f0f0;
+            --primary-color: #00bcd4;
+            --container-bg: #2b2b2b;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--container-bg);
+            padding: 20px;
+            border-radius: 8px;
+        }
+        h1, h2 {
+            color: var(--primary-color);
+        }
+        p, li {
+            line-height: 1.6;
+        }
+        a {
+            color: var(--primary-color);
+        }
+        .pricing-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .pricing-table th, .pricing-table td {
+            border: 1px solid #444;
+            padding: 10px;
+            text-align: left;
+        }
+        .pricing-table th {
+            background-color: #333;
+        }
+        pre {
+            background-color: #333;
+            padding: 10px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .live-demo button {
+            background-color: var(--primary-color);
+            color: var(--background-color);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .live-demo #result {
+            margin-top: 10px;
+        }
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 15px;
+            }
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Screenshot API</h1>
+            <p>A simple API for taking screenshots of web pages.</p>
+        </header>
+
+        <section id="how-it-works">
+            <h2>How x402 Micropayments Work</h2>
+            <p>This API uses the x402 protocol for micropayments. This means:</p>
+            <ul>
+                <li><strong>Pay-per-request:</strong> You only pay for what you use.</li>
+                <li><strong>No API keys needed:</strong> Payments are handled directly with each request.</li>
+                <li><strong>Network:</strong> Payments are settled over the Base mainnet.</li>
+            </ul>
+        </section>
+
+        <section id="pricing">
+            <h2>Pricing</h2>
+            <table class="pricing-table">
+                <thead>
+                    <tr>
+                        <th>Endpoint</th>
+                        <th>Price (USD)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>POST /screenshot</td>
+                        <td>$0.01</td>
+                    </tr>
+                    <tr>
+                        <td>GET /test/screenshot</td>
+                        <td>Free (with watermark)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="live-demo" class="live-demo">
+            <h2>Live Demo</h2>
+            <p>Enter a URL to take a test screenshot.</p>
+            <input type="text" id="url-input" placeholder="https://example.com" style="padding: 10px; border-radius: 4px; background-color: #333; color: var(--text-color); border: 1px solid #444; width: 70%;">
+            <button id="fetch-screenshot">Fetch Screenshot</button>
+            <div id="result" style="margin-top: 10px;"></div>
+        </section>
+
+        <section id="api-docs">
+            <h2>API Endpoints</h2>
+            <h3>Take Screenshot</h3>
+            <pre><code>curl -X 'POST' '/screenshot' -H 'accept: image/png' -H 'Content-Type: application/json' -d '{"url": "https://example.com"}' --output screenshot.png</code></pre>
+        </section>
+
+        <footer>
+            <p>
+                <a href="https://github.com/jameswilliamwisdom/crypto-sentiment-api" target="_blank">View on GitHub</a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById('fetch-screenshot').addEventListener('click', () => {
+            const resultEl = document.getElementById('result');
+            const url = document.getElementById('url-input').value;
+            if (!url) {
+                resultEl.textContent = 'Please enter a URL.';
+                return;
+            }
+            resultEl.innerHTML = 'Fetching...';
+            fetch(`/test/screenshot?url=${encodeURIComponent(url)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.blob();
+                })
+                .then(blob => {
+                    const imageUrl = URL.createObjectURL(blob);
+                    resultEl.innerHTML = `<img src="${imageUrl}" style="max-width: 100%; border-radius: 4px;">`;
+                })
+                .catch(error => {
+                    resultEl.textContent = 'Error: ' + error.message;
+                });
+        });
+    </script>
+</body>
+</html>
